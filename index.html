@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="SlotSync — a shared-resource booking scheduler for labs, study rooms, laundry and courts. Prevents double-bookings on a clear weekly calendar.">
+<meta name="color-scheme" content="light dark">
+<title>SlotSync — Shared Resource Booking</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📅</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<a class="skip-link" href="#calendar">Skip to the calendar</a>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="#top">
+      <span class="brand-mark" aria-hidden="true">◧</span>
+      <span class="brand-text">Slot<strong>Sync</strong></span>
+    </a>
+    <p class="brand-tag">One schedule. Zero double bookings.</p>
+    <button type="button" class="btn btn-ghost theme-toggle" id="themeToggle"
+            aria-pressed="false" aria-label="Switch to dark theme">
+      <span class="theme-icon" aria-hidden="true">🌗</span>
+      <span class="theme-label">Theme</span>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero wrap" aria-labelledby="heroTitle">
+    <div class="hero-copy">
+      <p class="eyebrow">Shared resources, sorted</p>
+      <h1 id="heroTitle">Book the lab, the room, the washer without any arguments.</h1>
+      <p class="lede">
+        SlotSync shows one weekly schedule per resource. Tap a free slot, name it, done.
+        The schedule itself blocks double-bookings, so nobody has to police the sign-up sheet.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#calendar">Open the calendar</a>
+        <a class="btn btn-ghost" href="#about">How it works</a>
+      </div>
+    </div>
+    <ul class="hero-stats" id="heroStats" aria-label="Summary of current data">
+      <!-- filled by JS -->
+    </ul>
+  </section>
+
+  <!-- ============ RESOURCES ============ -->
+  <section class="wrap section" aria-labelledby="resTitle">
+    <div class="section-head">
+      <div>
+        <h2 id="resTitle">1. Pick a resource</h2>
+        <p class="section-sub">Each resource has its own week and its own rules.</p>
+      </div>
+      <button type="button" class="btn btn-soft" id="addResourceBtn">+ Add resource</button>
+    </div>
+
+    <ul class="resource-grid" id="resourceList" role="list">
+      <!-- filled by JS -->
+    </ul>
+    <p class="empty-note" id="resourceEmpty" hidden>
+      No resources yet. Use <strong>Add resource</strong> to create your first one.
+    </p>
+  </section>
+
+  <!-- ============ CALENDAR ============ -->
+  <section class="wrap section" id="calendar" aria-labelledby="calTitle">
+    <div class="section-head cal-head">
+      <div>
+        <h2 id="calTitle">2. The week</h2>
+        <p class="section-sub" id="calSubtitle">Choose a resource above.</p>
+      </div>
+
+      <div class="week-controls">
+        <button type="button" class="btn btn-soft icon-btn" id="prevWeek" aria-label="Previous week">‹</button>
+        <button type="button" class="btn btn-soft" id="todayBtn">Today</button>
+        <button type="button" class="btn btn-soft icon-btn" id="nextWeek" aria-label="Next week">›</button>
+      </div>
+    </div>
+
+    <div class="legend" aria-hidden="false">
+      <span class="legend-item"><span class="swatch swatch-free"></span> Free — tap to book</span>
+      <span class="legend-item"><span class="swatch swatch-booked"></span> Booked</span>
+      <span class="legend-item"><span class="swatch swatch-past"></span> Past</span>
+      <span class="legend-item"><span class="swatch swatch-closed"></span> Closed hours</span>
+    </div>
+
+    <p class="cal-hint" id="calHint">
+      Tap any <strong>free</strong> slot to open the booking form. Tap a booking to see, edit or cancel it.
+    </p>
+
+    <div class="cal-scroll" id="calScroll" tabindex="0" role="region"
+         aria-label="Weekly schedule grid, scrollable horizontally and vertically">
+      <div class="cal-grid" id="calGrid">
+        <!-- filled by JS -->
+      </div>
+    </div>
+    <p class="scroll-note">Tip: the grid scrolls inside this box — the page itself stays put.</p>
+  </section>
+
+  <!-- ============ MY BOOKINGS + INSIGHTS ============ -->
+  <section class="wrap section two-col">
+    <section class="panel" aria-labelledby="mineTitle">
+      <h2 id="mineTitle">3. My bookings</h2>
+      <p class="section-sub">Type the name you booked with. Nothing leaves your device.</p>
+
+      <form class="inline-form" id="myBookingsForm" novalidate>
+        <div class="field">
+          <label for="whoInput">Your name</label>
+          <input type="text" id="whoInput" name="who" autocomplete="name"
+                 placeholder="e.g. Ali" maxlength="40" aria-describedby="whoError">
+          <p class="field-error" id="whoError" role="alert" hidden></p>
+        </div>
+        <button type="submit" class="btn btn-primary">Find</button>
+      </form>
+
+      <div id="myBookingsResult" aria-live="polite">
+        <p class="empty-note">Enter your name to see what you have coming up.</p>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="insightTitle">
+      <h2 id="insightTitle">4. This week at a glance</h2>
+      <p class="section-sub" id="insightSub">How busy each resource is, and when it is next free.</p>
+      <ul class="insight-list" id="insightList" role="list">
+        <!-- filled by JS -->
+      </ul>
+    </section>
+  </section>
+
+  <!-- ============ ABOUT ============ -->
+  <section class="wrap section about" id="about" aria-labelledby="aboutTitle">
+    <h2 id="aboutTitle">About SlotSync</h2>
+
+    <div class="about-grid">
+      <article class="about-card">
+        <h3>The problem</h3>
+        <p>
+          Universities, labs and hostels share expensive, limited things: lab equipment, study
+          rooms, one washing machine, one sports court. Today that is managed with a paper
+          sign-up sheet taped to a wall, or by shouting into a WhatsApp group.
+        </p>
+        <ul class="tick-list">
+          <li>Two people write on the same line — a double-booking.</li>
+          <li>Nobody can see what is free without walking over to look.</li>
+          <li>Someone books and never turns up, and the slot is wasted.</li>
+          <li>Arguments get settled by whoever is loudest, not by the schedule.</li>
+        </ul>
+      </article>
+
+      <article class="about-card">
+        <h3>Who it helps</h3>
+        <ul class="tick-list">
+          <li><strong>Students</strong> — see what is free in seconds and claim it.</li>
+          <li><strong>Lab and hostel staff</strong> — stop being the human booking desk.</li>
+          <li><strong>Everyone</strong> — a written record instead of a memory argument.</li>
+        </ul>
+        <p class="muted">
+          It is built for phones first, works offline, and needs no login and no server.
+        </p>
+      </article>
+
+      <article class="about-card about-steps">
+        <h3>How to use it — 3 steps</h3>
+        <ol class="steps">
+          <li>
+            <span class="step-num" aria-hidden="true">1</span>
+            <div>
+              <strong>Pick a resource.</strong>
+              Tap a card at the top. The week below changes to that resource.
+            </div>
+          </li>
+          <li>
+            <span class="step-num" aria-hidden="true">2</span>
+            <div>
+              <strong>Tap a free slot.</strong>
+              A form opens with the date and time already filled in. Add your name and
+              purpose, then confirm.
+            </div>
+          </li>
+          <li>
+            <span class="step-num" aria-hidden="true">3</span>
+            <div>
+              <strong>Manage it later.</strong>
+              Tap your booking to edit or cancel it, or use “My bookings” to find everything
+              under your name.
+            </div>
+          </li>
+        </ol>
+        <p class="muted">
+          If a slot is taken, SlotSync tells you exactly what it clashes with and offers the
+          nearest free times instead.
+        </p>
+      </article>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+
+  </div>
+</footer>
+
+<!-- ============ BOOKING DIALOG ============ -->
+<dialog id="bookingDialog" class="dialog" aria-labelledby="bookingDialogTitle">
+  <form method="dialog" class="dialog-form" id="bookingForm" novalidate>
+    <header class="dialog-head">
+      <h2 id="bookingDialogTitle">New booking</h2>
+      <button type="button" class="btn btn-ghost icon-btn close-btn" data-close-dialog
+              aria-label="Close dialog">✕</button>
+    </header>
+
+    <div class="dialog-body">
+      <p class="dialog-context" id="bookingContext"></p>
+
+      <div class="field">
+        <label for="bkName">Your name <span class="req">*</span></label>
+        <input type="text" id="bkName" name="name" autocomplete="name" maxlength="40"
+               aria-describedby="bkNameError bkNameHint" required>
+        <p class="hint" id="bkNameHint">So others know who booked it.</p>
+        <p class="field-error" id="bkNameError" role="alert" hidden></p>
+      </div>
+
+      <div class="field">
+        <label for="bkPurpose">Purpose <span class="req">*</span></label>
+        <input type="text" id="bkPurpose" name="purpose" maxlength="80"
+               placeholder="e.g. Physics lab practical" aria-describedby="bkPurposeError" required>
+        <p class="field-error" id="bkPurposeError" role="alert" hidden></p>
+      </div>
+
+      <div class="field">
+        <label for="bkDate">Date <span class="req">*</span></label>
+        <input type="date" id="bkDate" name="date" aria-describedby="bkDateError" required>
+        <p class="field-error" id="bkDateError" role="alert" hidden></p>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="bkStart">Start time <span class="req">*</span></label>
+          <select id="bkStart" name="start" aria-describedby="bkTimeError" required></select>
+        </div>
+        <div class="field">
+          <label for="bkEnd">End time <span class="req">*</span></label>
+          <select id="bkEnd" name="end" aria-describedby="bkTimeError" required></select>
+        </div>
+      </div>
+      <p class="field-error" id="bkTimeError" role="alert" hidden></p>
+
+      <div class="alert alert-error" id="conflictBox" role="alert" hidden>
+        <p class="alert-title" id="conflictTitle">That clashes with an existing booking.</p>
+        <p class="alert-body" id="conflictBody"></p>
+        <div class="suggest-wrap" id="suggestWrap" hidden>
+          <p class="suggest-label">Nearest free times for this resource:</p>
+          <div class="suggest-list" id="suggestList"></div>
+        </div>
+      </div>
+
+      <div class="rule-note" id="ruleNote"></div>
+    </div>
+
+    <footer class="dialog-foot">
+      <button type="button" class="btn btn-ghost" data-close-dialog>Cancel</button>
+      <button type="submit" class="btn btn-primary" id="saveBookingBtn">Save booking</button>
+    </footer>
+  </form>
+</dialog>
+
+<!-- ============ BOOKING DETAILS DIALOG ============ -->
+<dialog id="detailDialog" class="dialog" aria-labelledby="detailTitle">
+  <div class="dialog-form">
+    <header class="dialog-head">
+      <h2 id="detailTitle">Booking details</h2>
+      <button type="button" class="btn btn-ghost icon-btn close-btn" data-close-dialog
+              aria-label="Close dialog">✕</button>
+    </header>
+    <div class="dialog-body" id="detailBody"></div>
+    <footer class="dialog-foot">
+      <button type="button" class="btn btn-danger-soft" id="cancelBookingBtn">Cancel booking</button>
+      <button type="button" class="btn btn-soft" id="editBookingBtn">Edit</button>
+      <button type="button" class="btn btn-primary" data-close-dialog>Done</button>
+    </footer>
+  </div>
+</dialog>
+
+<!-- ============ RESOURCE DIALOG ============ -->
+<dialog id="resourceDialog" class="dialog" aria-labelledby="resourceDialogTitle">
+  <form method="dialog" class="dialog-form" id="resourceForm" novalidate>
+    <header class="dialog-head">
+      <h2 id="resourceDialogTitle">Add a resource</h2>
+      <button type="button" class="btn btn-ghost icon-btn close-btn" data-close-dialog
+              aria-label="Close dialog">✕</button>
+    </header>
+    <div class="dialog-body">
+      <div class="field">
+        <label for="rsName">Resource name <span class="req">*</span></label>
+        <input type="text" id="rsName" name="name" maxlength="40"
+               placeholder="e.g. Projector" aria-describedby="rsNameError" required>
+        <p class="field-error" id="rsNameError" role="alert" hidden></p>
+      </div>
+
+      <div class="field">
+        <label for="rsEmoji">Icon</label>
+        <div class="icon-field">
+          <input type="text" id="rsEmoji" name="emoji" maxlength="4" value="📦"
+                 aria-describedby="rsEmojiHint rsEmojiError">
+          <span class="icon-preview" id="iconPreview" aria-hidden="true">📦</span>
+        </div>
+        <p class="hint" id="rsEmojiHint">
+          Type or paste one emoji — the box beside it shows how your icon will look on the card.
+        </p>
+        <p class="field-error" id="rsEmojiError" role="alert" hidden></p>
+      </div>
+
+      <div class="field">
+        <label for="rsColor">Card colour</label>
+        <div class="color-field">
+          <span class="color-swatch" id="colorSwatch" aria-hidden="true"></span>
+          <select id="rsColor" name="color" aria-describedby="rsColorHint">
+            <option value="teal">Teal</option>
+            <option value="violet">Violet</option>
+            <option value="amber">Amber</option>
+            <option value="rose">Rose</option>
+            <option value="sky">Sky</option>
+            <option value="lime">Lime</option>
+          </select>
+        </div>
+        <p class="hint" id="rsColorHint">
+          Purely a visual label. It tints this resource's card and its bookings in the calendar.
+        </p>
+      </div>
+
+      <div class="field">
+        <label for="rsMax">Maximum booking length <span class="req">*</span></label>
+        <select id="rsMax" name="maxMinutes" aria-describedby="rsMaxHint" required>
+          <option value="30">30 minutes</option>
+          <option value="60">1 hour</option>
+          <option value="90">1 hour 30 minutes</option>
+          <option value="120" selected>2 hours</option>
+          <option value="180">3 hours</option>
+          <option value="240">4 hours</option>
+        </select>
+        <p class="hint" id="rsMaxHint">No single booking may be longer than this.</p>
+      </div>
+    </div>
+    <footer class="dialog-foot">
+      <button type="button" class="btn btn-ghost" data-close-dialog>Cancel</button>
+      <button type="submit" class="btn btn-primary">Add resource</button>
+    </footer>
+  </form>
+</dialog>
+
+<!-- ============ CONFIRM DIALOG ============ -->
+<dialog id="confirmDialog" class="dialog dialog-sm" aria-labelledby="confirmTitle">
+  <div class="dialog-form">
+    <header class="dialog-head">
+      <h2 id="confirmTitle">Are you sure?</h2>
+      <button type="button" class="btn btn-ghost icon-btn close-btn" data-close-dialog
+              aria-label="Close dialog">✕</button>
+    </header>
+    <div class="dialog-body">
+      <p id="confirmBody"></p>
+    </div>
+    <footer class="dialog-foot">
+      <button type="button" class="btn btn-ghost" data-close-dialog>Keep it</button>
+      <button type="button" class="btn btn-danger" id="confirmYesBtn">Yes, do it</button>
+    </footer>
+  </div>
+</dialog>
+
+<!-- toast host -->
+<div class="toast-host" id="toastHost" aria-live="polite" aria-atomic="false"></div>
+
+<script src="js/app.js"></script>
+<script src="js/tests.js"></script>
+</body>
+</html>
