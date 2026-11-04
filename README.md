@@ -231,26 +231,3 @@ is length-limited and stripped of URL-ish characters.
 
 ---
 
-## 7. Honest limitations
-
-- **Data is per-browser, per-device.** Two students on two phones do not see each other's
-  bookings. Real sharing needs a backend, which is out of scope here — this is a
-  front-end demonstration of the scheduling logic and interface.
-- **No import or export.** Data cannot leave the browser, so deleting site data deletes
-  the schedule with no way to take a copy first. There is also no way to restore the
-  original sample data short of clearing site storage — the sample data is written on
-  first load, so clearing it brings the demo back.
-- **No accounts or authentication.** Anyone can type anyone's name. Fitting for a lab
-  sign-up sheet; not fitting for anything sensitive.
-- **No recurring bookings.** A weekly lab session must be booked week by week.
-- **No no-show tracking.** The problem statement mentions no-shows; the app records who
-  booked but does not yet flag or penalise repeat no-shows.
-- **Opening hours are fixed** (08:00–20:00) across all resources, rather than per
-  resource.
-- **Concurrency.** If the same page were open in two tabs, the second tab would not see
-  the first tab's change until reload. A `storage` event listener would fix this; it is
-  not implemented.
-- The **Google Font** is a network request. The page is fully usable without it (system
-  font fallback), but on a slow connection the typography will shift once it loads.
-
----
