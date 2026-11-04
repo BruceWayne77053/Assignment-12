@@ -254,17 +254,3 @@ is length-limited and stripped of URL-ish characters.
   font fallback), but on a slow connection the typography will shift once it loads.
 
 ---
-
-## 8. Future improvements
-
-1. A tiny backend (or a shared file / Firebase-style store) so a whole hostel sees one
-   schedule.
-2. Recurring bookings, and "book the same slot every week".
-3. Email or push reminders to cut no-shows; a simple attendance check-in.
-4. QR code on the physical resource that deep-links to its calendar.
-5. An admin view for staff: usage statistics per resource, to justify buying a second
-   washing machine.
-6. Cross-tab sync via the `storage` event.
-7. CSV or calendar (`.ics`) **export**, plus import, so a schedule can leave the browser
-   and an existing paper sign-up sheet can be migrated in one go.
-8. A "restore sample data" action, so the demo can be reset without clearing site storage.
